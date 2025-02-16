@@ -1,6 +1,6 @@
 {
   "name": "@karthikganeshram/link-checker",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -33,6 +33,7 @@
     "zod": "^3.24.2"
   },
   "files": [
-    "dist/**/*.ts"
+    "dist/**/*.js",
+    "dist/**/*.d.ts"
   ]
 }
