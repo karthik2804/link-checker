@@ -41,23 +41,6 @@ function setupEventHandlers(checker: LinkChecker) {
     const reason = statusCode ? `Status: ${statusCode}` : `Error: ${error}`;
     console.log(`❌ ${url} (${reason})`);
   });
-  checker.on(
-    "complete",
-    ({ linksVisited, brokenLinks }: events.CompletionEvent) => {
-      console.log(`\nCompleted checking ${linksVisited.length} links...`);
-      if (brokenLinks.length > 0) {
-        console.log(`${brokenLinks.length} Broken links found:`);
-        brokenLinks.forEach((link) => {
-          console.log(`- ${link.url} (${link.reason})`);
-          if (link.parentUrl) {
-            console.log(`  Found on page: ${link.parentUrl}`);
-          }
-        });
-      } else {
-        console.log("No broken links found.");
-      }
-    },
-  );
 }
 
 async function main() {
