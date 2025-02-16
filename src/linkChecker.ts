@@ -89,7 +89,7 @@ export class LinkChecker {
     this.events.emit("start", url);
 
     // Add the initial URL to the queue
-    this.queue.push({ url, isRecursive: true });
+    this.queue.push({ url: this.normalizeUrl(url), isRecursive: true });
     await this.processQueue();
 
     // Only emit complete if we weren't stopped
@@ -183,7 +183,7 @@ export class LinkChecker {
               if (!this.visited.has(link) && !this.shouldIgnore(link)) {
                 let shouldRecurse = new URL(link).origin === baseOrigin;
                 this.queue.push({
-                  url: link,
+                  url: this.normalizeUrl(link),
                   parentUrl: url,
                   isRecursive: shouldRecurse,
                 });
@@ -200,7 +200,7 @@ export class LinkChecker {
       } else {
         this.events.emit("link:error", { url, statusCode, parentUrl });
         this.brokenLinks.push({
-          url,
+          url: this.normalizeUrl(url),
           reason: `Status code: ${statusCode}`,
           parentUrl,
         });
@@ -213,7 +213,7 @@ export class LinkChecker {
       });
 
       this.brokenLinks.push({
-        url,
+        url: this.normalizeUrl(url),
         reason: `Error: ${error.message}`,
         parentUrl,
       });
@@ -283,6 +283,18 @@ export class LinkChecker {
         }
       })
       .filter((href): href is string => href !== null);
+  }
+
+  private normalizeUrl(url: string): string {
+    try {
+      let parsed = new URL(url);
+      if (parsed.pathname !== "/" && parsed.pathname.endsWith("/")) {
+        parsed.pathname = parsed.pathname.slice(0, -1);
+      }
+      return parsed.toString();
+    } catch (error) {
+      return url;
+    }
   }
 
   // Check if a URL should be ignored based on the ignoreLinks option.
